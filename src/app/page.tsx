@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 export default function HomePage() {
+  const [open, setOpen] = useState(false);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
@@ -19,6 +24,8 @@ export default function HomePage() {
               database and authentication.
             </div>
           </Link>
+          <button onClick={() => { setOpen(!open) }} >Click Me</button>
+          {open && <h1>Open</h1>}
           <Link
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
             href="https://create.t3.gg/en/introduction"
