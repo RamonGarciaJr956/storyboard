@@ -1,9 +1,13 @@
 "use client";
 
+import { LogOut, User } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { type Dispatch, type SetStateAction } from "react";
 
 const Sidebar = ({ setShowSocials, setGenerators }: { setShowSocials: Dispatch<SetStateAction<boolean>>, setGenerators: Dispatch<SetStateAction<{ id: string; type: string; }[]>> }) => {
+    const { data: session, status } = useSession();
+
     return (
         <div className="flex h-screen flex-col justify-between border-e bg-white min-w-[260px]">
             <div className="px-4 py-6">
@@ -98,21 +102,28 @@ const Sidebar = ({ setShowSocials, setGenerators }: { setShowSocials: Dispatch<S
             </div>
 
             <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-                <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
-                    <img
-                        alt=""
-                        src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                        className="size-10 rounded-full object-cover"
-                    />
-
+                <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
+                    {
+                        session?.user.image ?
+                            <img
+                                alt="User Image"
+                                src={session?.user.image}
+                                className="size-10 rounded-full object-cover"
+                            />
+                            :
+                            <User />
+                    }
                     <div>
                         <p className="text-xs">
-                            <strong className="block font-medium">Eric Frusciante</strong>
+                            <strong className="block font-medium">{session?.user.name}</strong>
 
-                            <span> eric@frusciante.com </span>
+                            <span>{session?.user.email}</span>
                         </p>
                     </div>
-                </a>
+                    <button className="ml-auto" onClick={() => signOut()}>
+                        <LogOut className="h-5 w-5 text-zinc-500" />
+                    </button>
+                </div>
             </div>
         </div>
     );

@@ -1,8 +1,10 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import { decode, encode } from "next-auth/jwt";
 import { v4 as uuidV4 } from "uuid";
-
+import { eq } from 'drizzle-orm';
 import { authOptions } from "~/server/auth";
+import { tracker } from "~/server/db/schema";
+import { db } from "~/server/db";
 
 type CombineRequest = Request & NextApiRequest;
 type CombineResponse = Response & NextApiResponse;
@@ -10,7 +12,29 @@ type CombineResponse = Response & NextApiResponse;
 const handler = async (req: CombineRequest, res: CombineResponse) => {
     const callbacks: NextAuthOptions["callbacks"] = {
         ...authOptions.callbacks,
-        async signIn({ user }) {
+        async signIn({ user, account }) {
+            if (account?.provider !== 'credentials' && account?.providerAccountId) {
+                try {
+                    const existingTracker = await db.select()
+                        .from(tracker)
+                        .where(eq(tracker.providerId, account.providerAccountId))
+                        .limit(1);
+        
+                    if (existingTracker.length === 0) {
+                        await db.insert(tracker).values({
+                            providerId: account.providerAccountId,
+                            firstLogin: true,
+                        });
+
+                        console.log(`Tracker created for provider account ID: ${account.providerAccountId}`);
+                    } else {
+                        console.log(`Tracker already exists for provider account ID: ${account.providerAccountId}`);
+                    }
+                } catch (error) {
+                    console.error("Error managing tracker:", error instanceof Error ? error.message : String(error));
+                }
+            }
+            
             if (req.url?.includes("callback") && req.url.includes("credentials") && req.method === "POST") {
                 const sessionToken = generateSessionToken();
                 const sessionExpiry = fromDate(
