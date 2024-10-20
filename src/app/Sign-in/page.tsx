@@ -14,22 +14,17 @@ import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 const Page = () => {
   
 
-  const [password, setPassword] = useState("")
-  const [type, setType] = useState('password')
+  const [password, setPassword] = useState("");
+  const [type1, setType] = useState('password');
 
 
-  const viewPassword = (e: MouseEvent) =>{
-    e.preventDefault()
-    if(type == 'password')
-    {
-      setType('text')
+  const handleToggle = () => {
+    if (type1=='password'){
+       setType('text')
+    } else {
+       setType('password')
     }
-    else if(type == 'text')
-    {
-      setType('password')
-    }
-    return
-  }
+ }
   
   return (
     
@@ -78,13 +73,15 @@ const Page = () => {
 
       <div className="relative">
         <input
-          type="password"
+          type={type1}
           className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
           placeholder="Enter password"
+          onChange={(e) => setPassword(e.target.value) }
+          autoComplete="current-password"
         />
      
         <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
-        <button onClick={(e) => viewPassword}>
+        <button type="button" onClick={handleToggle}>
           <FontAwesomeIcon icon={faEyeSlash} />
         </button>  
         
@@ -95,20 +92,20 @@ const Page = () => {
     <div className="flex items-center justify-between">
       <p className="text-sm text-gray-200">
         No account? 
-        <a className="underline" href="#">Sign up</a>
+        <a className="underline" href="Sign-up">Sign up</a>
       </p>
     
-      <button type="submit" className="inline-block rounded-full px-5 py-3 text-sm font-medium text-black bg-white"> Sign in </button>
+      <button type="button" className="inline-block rounded-full px-5 py-3 text-sm font-medium text-black bg-white"> Sign in </button>
 
       <button
-       type="submit" className="inline-block rounded-full px-5 py-3 text-sm font-medium text-black bg-white"
+       type="button" className="inline-block rounded-full px-5 py-3 text-sm font-medium text-black bg-white"
        >
         
         <FontAwesomeIcon icon={faGoogle}/>
         
        </button>
        <button
-       type="submit" className="inline-block rounded-full px-5 py-3 text-sm font-medium text-black bg-white"
+       type="button" className="inline-block rounded-full px-5 py-3 text-sm font-medium text-black bg-white"
        >
         
         <FontAwesomeIcon icon={faDiscord}/>
